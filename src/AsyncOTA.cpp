@@ -41,9 +41,9 @@ void AsyncOTA::begin(){
             }
         }
         #if defined(ESP8266)
-            request->send(200, "application/json", "{\"id\": \""+getID()+"\", \"hardware\": \"ESP8266\"}");
+            request->send(200, "application/json", "{\"id\": \""+ESP.getChipId())"\", \"hardware\": \"ESP8266\"}");
         #elif defined(ESP32)
-            request->send(200, "application/json", "{\"id\": \""+getID()+"\", \"hardware\": \"ESP32\"}");
+            request->send(200, "application/json", "{\"id\": \""+(uint32_t)ESP.getEfuseMac()+"\", \"hardware\": \"ESP32\"}");
         #endif
     });
 
@@ -70,7 +70,8 @@ void AsyncOTA::begin(){
         response->addHeader("Connection", "close");
         response->addHeader("Access-Control-Allow-Origin", "*");
         request->send(response);
-        restart();
+        delay(1000);
+        ESP.restart();
     }, [&](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
         //Upload handler chunks in data
         if(_auth_required){
