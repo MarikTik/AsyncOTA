@@ -1,6 +1,27 @@
 #include <AsyncOTA.h>
-#include "utils.h"
 
+
+
+#include "Arduino.h"
+#include "stdlib_noniso.h"
+
+#if defined(ESP8266)
+    #include "ESP8266WiFi.h"
+    #include "ESPAsyncTCP.h"
+    #include "flash_hal.h"
+    #include "FS.h"
+#elif defined(ESP32)
+    #include "WiFi.h"
+    #include "AsyncTCP.h"
+    #include "Update.h"
+    #include "esp_int_wdt.h"
+    #include "esp_task_wdt.h"
+#endif
+
+#include "Hash.h"
+#include "FS.h"
+#include "elegantWebpage.h"
+#include "utils.h"
 
 AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="") : 
     _server(server),
@@ -11,19 +32,10 @@ AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* 
 
 void AsyncOTA::begin(){
     _server = server;
-
-    if(strlen(username) > 0){
-        _authRequired = true;
-        _username = username;
-        _password = password;
-    }else{
-        _authRequired = false;
-        _username = "";
-        _password = "";
-    }
+    bool _auth_required = strlen(_username) > 0;
 
     server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
-        if(_authRequired){
+        if(_auth_required){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
             }
@@ -36,7 +48,7 @@ void AsyncOTA::begin(){
     });
 
     server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
-        if(_authRequired){
+        if(_auth_required){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
             }
@@ -47,7 +59,7 @@ void AsyncOTA::begin(){
     });
 
     server.on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
-        if(_authRequired){
+        if(_auth_required){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
             }
@@ -61,7 +73,7 @@ void AsyncOTA::begin(){
         restart();
     }, [&](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
         //Upload handler chunks in data
-        if(_authRequired){
+        if(_auth_required){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
             }
