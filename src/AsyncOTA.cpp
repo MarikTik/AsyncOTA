@@ -1,24 +1,8 @@
 #include <AsyncOTA.h>
+#include "utils.h"
 
 
 
-void restart() {
-    yield();
-    delay(1000);
-    yield();
-    ESP.restart();
-}
-
-String getID(){
-    String id = "";
-    #if defined(ESP8266)
-        id = String(ESP.getChipId());
-    #elif defined(ESP32)
-        id = String((uint32_t)ESP.getEfuseMac(), HEX);
-    #endif
-    id.toUpperCase();
-    return id;
-}
 
 
 AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="") : 
@@ -41,7 +25,7 @@ void AsyncOTA::begin(){
         _password = "";
     }
 
-    _server->on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
+    server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_authRequired){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
@@ -54,7 +38,7 @@ void AsyncOTA::begin(){
         #endif
     });
 
-    _server->on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
+    server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_authRequired){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
@@ -65,7 +49,7 @@ void AsyncOTA::begin(){
         request->send(response);
     });
 
-    _server->on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
+    server.on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
         if(_authRequired){
             if(!request->authenticate(_username.c_str(), _password.c_str())){
                 return request->requestAuthentication();
