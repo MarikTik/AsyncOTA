@@ -29,20 +29,13 @@
 class AsyncOTA{
 
     public:
-        void
-            setID(const char* id),
-            begin(AsyncWebServer *server, const char* username = "", const char* password = ""),
-            loop(),
-            restart();
+        AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="");
+        void begin();
 
     private:
-        AsyncWebServer *_server;
-
-        String getID();
-
-        String _id = getID();
-        String _username = "";
-        String _password = "";
+        AsyncWebServer& _server;
+        const char* _username = "";
+        const char* _password = "";
         bool _authRequired = false;
 
 };

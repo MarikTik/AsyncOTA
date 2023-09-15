@@ -2,11 +2,33 @@
 
 
 
-void AsyncOTA::setID(const char* id){
-    _id = id;
+void restart() {
+    yield();
+    delay(1000);
+    yield();
+    ESP.restart();
 }
 
-void AsyncOTA::begin(AsyncWebServer *server, const char* username, const char* password){
+String getID(){
+    String id = "";
+    #if defined(ESP8266)
+        id = String(ESP.getChipId());
+    #elif defined(ESP32)
+        id = String((uint32_t)ESP.getEfuseMac(), HEX);
+    #endif
+    id.toUpperCase();
+    return id;
+}
+
+
+AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="") : 
+    _server(server),
+    _username(username),
+    _password(password)
+{
+}
+
+void AsyncOTA::begin(){
     _server = server;
 
     if(strlen(username) > 0){
@@ -106,24 +128,3 @@ void AsyncOTA::begin(AsyncWebServer *server, const char* username, const char* p
     });
 }
 
-// deprecated, keeping for backward compatibility
-void AsyncOTA::loop() {
-}
-
-void AsyncOTA::restart() {
-    yield();
-    delay(1000);
-    yield();
-    ESP.restart();
-}
-
-String AsyncOTA::getID(){
-    String id = "";
-    #if defined(ESP8266)
-        id = String(ESP.getChipId());
-    #elif defined(ESP32)
-        id = String((uint32_t)ESP.getEfuseMac(), HEX);
-    #endif
-    id.toUpperCase();
-    return id;
-}
