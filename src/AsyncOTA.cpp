@@ -1,6 +1,6 @@
 #include <AsyncOTA.h>
 
-AsyncOTA AsyncElegantOTA;
+
 
 void AsyncOTA::setID(const char* id){
     _id = id;

@@ -46,7 +46,5 @@ class AsyncOTA{
         bool _authRequired = false;
 
 };
-
-extern AsyncOTA AsyncElegantOTA;
-
+ 
 #endif
