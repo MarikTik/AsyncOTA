@@ -26,7 +26,7 @@
 #include "elegantWebpage.h"
 
 
-class AsyncElegantOtaClass{
+class AsyncOTA{
 
     public:
         void
@@ -47,6 +47,6 @@ class AsyncElegantOtaClass{
 
 };
 
-extern AsyncElegantOtaClass AsyncElegantOTA;
+extern AsyncOTA AsyncElegantOTA;
 
 #endif

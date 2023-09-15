@@ -1,12 +1,12 @@
-#include <AsyncElegantOTA.h>
+#include <AsyncOTA.h>
 
-AsyncElegantOtaClass AsyncElegantOTA;
+AsyncOTA AsyncElegantOTA;
 
-void AsyncElegantOtaClass::setID(const char* id){
+void AsyncOTA::setID(const char* id){
     _id = id;
 }
 
-void AsyncElegantOtaClass::begin(AsyncWebServer *server, const char* username, const char* password){
+void AsyncOTA::begin(AsyncWebServer *server, const char* username, const char* password){
     _server = server;
 
     if(strlen(username) > 0){
@@ -107,17 +107,17 @@ void AsyncElegantOtaClass::begin(AsyncWebServer *server, const char* username, c
 }
 
 // deprecated, keeping for backward compatibility
-void AsyncElegantOtaClass::loop() {
+void AsyncOTA::loop() {
 }
 
-void AsyncElegantOtaClass::restart() {
+void AsyncOTA::restart() {
     yield();
     delay(1000);
     yield();
     ESP.restart();
 }
 
-String AsyncElegantOtaClass::getID(){
+String AsyncOTA::getID(){
     String id = "";
     #if defined(ESP8266)
         id = String(ESP.getChipId());
