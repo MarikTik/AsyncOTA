@@ -2,9 +2,6 @@
 #include "utils.h"
 
 
-
-
-
 AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="") : 
     _server(server),
     _username(username),
@@ -32,9 +29,9 @@ void AsyncOTA::begin(){
             }
         }
         #if defined(ESP8266)
-            request->send(200, "application/json", "{\"id\": \""+_id+"\", \"hardware\": \"ESP8266\"}");
+            request->send(200, "application/json", "{\"id\": \""+getID()+"\", \"hardware\": \"ESP8266\"}");
         #elif defined(ESP32)
-            request->send(200, "application/json", "{\"id\": \""+_id+"\", \"hardware\": \"ESP32\"}");
+            request->send(200, "application/json", "{\"id\": \""+getID()+"\", \"hardware\": \"ESP32\"}");
         #endif
     });
 
