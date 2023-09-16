@@ -40,11 +40,11 @@ void AsyncOTA::begin(){
                 return request->requestAuthentication();
             }
         }
-        #if defined(ESP8266)
-            request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))+"\", \"hardware\": \"ESP8266\"}");
-        #elif defined(ESP32)
-            request->send(200, "application/json", "{\"id\": \""+((uint32_t)ESP.getEfuseMac())+"\", \"hardware\": \"ESP32\"}");
-        #endif
+        // #if defined(ESP8266)
+        //     request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))+"\", \"hardware\": \"ESP8266\"}");
+        // #elif defined(ESP32)
+        //     request->send(200, "application/json", "{\"id\": \""+((uint32_t)ESP.getEfuseMac())+"\", \"hardware\": \"ESP32\"}");
+        // #endif
     });
 
     _server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
