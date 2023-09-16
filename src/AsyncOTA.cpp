@@ -46,7 +46,7 @@ void AsyncOTA::begin(){
         #elif defined(ESP32)
             id = uint32_t(ESP.getEfuseMac());
         #endif
-        sprintf(buffer,"{\"id\": \"" "%x" "\", \"hardware\": \"ESP8266\"}", id);
+        sprintf(json,"{\"id\": \"" "%x" "\", \"hardware\": \"ESP8266\"}", id);
         request->send(200, "application/json", json);
     });
 
