@@ -36,20 +36,20 @@ void AsyncOTA::begin(){
 
     server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_auth_required){
-            if(!request->authenticate(_username.c_str(), _password.c_str())){
+            if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
             }
         }
         #if defined(ESP8266)
-            request->send(200, "application/json", "{\"id\": \""+ESP.getChipId())"\", \"hardware\": \"ESP8266\"}");
+            request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))"\", \"hardware\": \"ESP8266\"}");
         #elif defined(ESP32)
-            request->send(200, "application/json", "{\"id\": \""+(uint32_t)ESP.getEfuseMac()+"\", \"hardware\": \"ESP32\"}");
+            request->send(200, "application/json", "{\"id\": \""+((uint32_t)ESP.getEfuseMac())+"\", \"hardware\": \"ESP32\"}");
         #endif
     });
 
     server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_auth_required){
-            if(!request->authenticate(_username.c_str(), _password.c_str())){
+            if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
             }
         }
@@ -60,7 +60,7 @@ void AsyncOTA::begin(){
 
     server.on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
         if(_auth_required){
-            if(!request->authenticate(_username.c_str(), _password.c_str())){
+            if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
             }
         }
@@ -75,7 +75,7 @@ void AsyncOTA::begin(){
     }, [&](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
         //Upload handler chunks in data
         if(_auth_required){
-            if(!request->authenticate(_username.c_str(), _password.c_str())){
+            if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
             }
         }
