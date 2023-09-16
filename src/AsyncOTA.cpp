@@ -23,7 +23,7 @@
 #include "elegantWebpage.h"
  
 
-AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* password="") : 
+AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username, const char* password) : 
     _server(server),
     _username(username),
     _password(password)
@@ -31,7 +31,7 @@ AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username="", const char* 
 }
 
 void AsyncOTA::begin(){
-    _server = server;
+ 
     bool _auth_required = strlen(_username) > 0;
 
     server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
@@ -41,7 +41,7 @@ void AsyncOTA::begin(){
             }
         }
         #if defined(ESP8266)
-            request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))"\", \"hardware\": \"ESP8266\"}");
+            request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))+"\", \"hardware\": \"ESP8266\"}");
         #elif defined(ESP32)
             request->send(200, "application/json", "{\"id\": \""+((uint32_t)ESP.getEfuseMac())+"\", \"hardware\": \"ESP32\"}");
         #endif
