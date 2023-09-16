@@ -22,6 +22,12 @@
 
 #include <string.h>
 
+void restart(){
+    yield();
+    delay(1000);
+    yield();
+    ESP.restart();
+}
 AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username, const char* password) : 
     _server(server),
     _username(username),
@@ -32,7 +38,7 @@ AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username, const char* pas
 void AsyncOTA::begin(){
  
     bool _auth_required = strlen(_username) > 0;
-
+ 
     _server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_auth_required){
             if(!request->authenticate(_username, _password)){
@@ -73,8 +79,7 @@ void AsyncOTA::begin(){
         response->addHeader("Connection", "close");
         response->addHeader("Access-Control-Allow-Origin", "*");
         request->send(response);
-        delay(1000);
-        ESP.restart();
+        restart();
     }, [&](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
         //Upload handler chunks in data
         if(_auth_required){
