@@ -1,7 +1,4 @@
-#include <AsyncOTA.h>
-
-
-
+#include "AsyncOTA.h"
 #include "Arduino.h"
 #include "stdlib_noniso.h"
 
@@ -23,6 +20,8 @@
 #include "elegantWebpage.h"
  
 
+#include <string.h>
+
 AsyncOTA::AsyncOTA(AsyncWebServer& server, const char* username, const char* password) : 
     _server(server),
     _username(username),
@@ -40,11 +39,15 @@ void AsyncOTA::begin(){
                 return request->requestAuthentication();
             }
         }
-        // #if defined(ESP8266)
-        //     request->send(200, "application/json", "{\"id\": \""+String(ESP.getChipId()))+"\", \"hardware\": \"ESP8266\"}");
-        // #elif defined(ESP32)
-        //     request->send(200, "application/json", "{\"id\": \""+((uint32_t)ESP.getEfuseMac())+"\", \"hardware\": \"ESP32\"}");
-        // #endif
+        char json[41]; // reserve for the exact amount of characters
+        uint32_t id;
+        #if defined(ESP8266)
+            id = ESP.getChipId();
+        #elif defined(ESP32)
+            id = uint32_t(ESP.getEfuseMac());
+        #endif
+        sprintf(buffer,"{\"id\": \"" "%x" "\", \"hardware\": \"ESP8266\"}", id);
+        request->send(200, "application/json", json);
     });
 
     _server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
