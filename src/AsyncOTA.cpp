@@ -34,7 +34,7 @@ void AsyncOTA::begin(){
  
     bool _auth_required = strlen(_username) > 0;
 
-    server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
+    _server.on("/update/identity", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_auth_required){
             if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
@@ -47,7 +47,7 @@ void AsyncOTA::begin(){
         #endif
     });
 
-    server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
+    _server.on("/update", HTTP_GET, [&](AsyncWebServerRequest *request){
         if(_auth_required){
             if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
@@ -58,7 +58,7 @@ void AsyncOTA::begin(){
         request->send(response);
     });
 
-    server.on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
+    _server.on("/update", HTTP_POST, [&](AsyncWebServerRequest *request) {
         if(_auth_required){
             if(!request->authenticate(_username, _password)){
                 return request->requestAuthentication();
